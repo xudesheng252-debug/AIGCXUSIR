@@ -7,3 +7,9 @@ test.txt
 build_site.py
 start.bat
 start.ps1
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
