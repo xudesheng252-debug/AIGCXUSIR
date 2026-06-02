@@ -61,10 +61,10 @@ var MEDIA = [
 var G=document.getElementById("gallery");
 var LB=document.getElementById("lightbox"),LBI=document.getElementById("lightboxImg"),LBN=document.getElementById("lightboxName"),LBC=document.getElementById("lightboxClose"),LBP=document.getElementById("lightboxPrev"),LBNX=document.getElementById("lightboxNext"),LBT=[],LBIX=0;
 
-// ===== B站嵌入样式 & 视频控件隐藏 =====
+// ===== B站嵌入样式 & 视频卡片 =====
 (function(){
   var s=document.createElement("style");
-  s.textContent=".bili-embed{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1}video::-webkit-media-controls-download-button,video::-webkit-media-controls-cast-button,video::-webkit-media-controls-overlay-cast-button,video::-internal-media-controls-cast-button,video::-internal-media-controls-download-button,video::-webkit-media-controls-picture-in-picture-button,video::-webkit-media-controls-toggle-closed-captions-button{display:none!important;width:0!important;height:0!important;opacity:0!important;pointer-events:none!important}";
+  s.textContent=".bili-embed{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;border-radius:10px}.video-card{aspect-ratio:9/16;background:#111}.video-card .bili-embed{opacity:0.6;transition:opacity 0.3s ease}.video-card:hover .bili-embed{opacity:1}video::-webkit-media-controls-download-button,video::-webkit-media-controls-cast-button,video::-webkit-media-controls-overlay-cast-button,video::-internal-media-controls-cast-button,video::-internal-media-controls-download-button,video::-webkit-media-controls-picture-in-picture-button,video::-webkit-media-controls-toggle-closed-captions-button{display:none!important;width:0!important;height:0!important;opacity:0!important;pointer-events:none!important}";
   document.head.appendChild(s);
 })();
 
@@ -78,7 +78,7 @@ function render(f){
   }
   var biliPrefix = "https://www.bilibili.com/video/";
   items.forEach(function(it,i){
-    var c=document.createElement("div");c.className="gallery-card";
+    var c=document.createElement("div");c.className=v?"gallery-card video-card":"gallery-card";
     var v=it.type==="video";var n=it.file.replace(/\.[^.]+$/, "");var u="media/"+encodeURI(it.file);
     var b=v?"<svg width=14 height=14 viewBox=\"0 0 24 24\" fill=none stroke=currentColor stroke-width=2><polygon points=\"5 3 19 12 5 21 5 3\"/></svg>":"<svg width=14 height=14 viewBox=\"0 0 24 24\" fill=none stroke=currentColor stroke-width=2><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><path d=m21 15-5-5L5 21/></svg>";
     if(v){
