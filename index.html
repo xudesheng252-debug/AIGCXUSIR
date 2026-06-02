@@ -37,34 +37,34 @@
 <script>
 // ===== 静态数据（直接从 media.json 内联） =====
 var MEDIA = [
-  {"type": "video", "file": "AI战士单挑boss.mp4", "url": "https://files.catbox.moe/ws8sui.mp4"},
-  {"type": "video", "file": "AI测试奇幻短片01.mp4", "url": "https://files.catbox.moe/b1z6fm.mp4"},
-  {"type": "video", "file": "AI测试奇幻短片02.mp4", "url": "https://files.catbox.moe/c1dstp.mp4"},
-  {"type": "video", "file": "云境溯神墟_神话天穹.mp4", "url": "https://files.catbox.moe/yf8u8r.mp4"},
-  {"type": "video", "file": "刺客割草.mp4", "url": "https://files.catbox.moe/yw5ynn.mp4"},
+  {"type": "video", "file": "AI战士单挑boss.mp4", "bvid": "BV1ebVr6rE7R"},
+  {"type": "video", "file": "AI测试奇幻短片01.mp4", "bvid": "BV15bVr6rE5f"},
+  {"type": "video", "file": "AI测试奇幻短片02.mp4", "bvid": "BV1VbVr6rEUz"},
+  {"type": "video", "file": "云境溯神墟_神话天穹.mp4", "bvid": "BV1RbVr6rEFJ"},
+  {"type": "video", "file": "刺客割草.mp4", "bvid": "BV1Y1VB6AEe3"},
   {"type": "image", "file": "布丁.jpg"},
-  {"type": "video", "file": "战士刷怪.mp4", "url": "https://files.catbox.moe/hd2w45.mp4"},
-  {"type": "video", "file": "战士御龙飞行.mp4", "url": "https://files.catbox.moe/rff5pg.mp4"},
-  {"type": "video", "file": "战士捕宠.mp4", "url": "https://files.catbox.moe/6boh3w.mp4"},
+  {"type": "video", "file": "战士刷怪.mp4", "bvid": "BV1ebVr6rEe5"},
+  {"type": "video", "file": "战士御龙飞行.mp4", "bvid": "BV15bVr6rEjQ"},
+  {"type": "video", "file": "战士捕宠.mp4", "bvid": "BV19bVr6rEdK"},
   {"type": "image", "file": "松鼠.jpg"},
   {"type": "image", "file": "梦幻村.png"},
-  {"type": "video", "file": "武将战场.mp4", "url": "https://files.catbox.moe/0hq9sl.mp4"},
+  {"type": "video", "file": "武将战场.mp4", "bvid": "BV19bVr6rEDa"},
   {"type": "image", "file": "海滨.png"},
   {"type": "image", "file": "熊猫.png"},
   {"type": "image", "file": "田园.jpg"},
   {"type": "image", "file": "童话森林.jpg"},
   {"type": "image", "file": "童话荧光的夜空 .png"},
-  {"type": "video", "file": "西方奇幻大片.mp4", "url": "https://files.catbox.moe/gj1n46.mp4"}
+  {"type": "video", "file": "西方奇幻大片.mp4", "bvid": "BV1GhVr6gEQ4"}
 ];
 
 // ===== DOM 引用 =====
 var G=document.getElementById("gallery");
 var LB=document.getElementById("lightbox"),LBI=document.getElementById("lightboxImg"),LBN=document.getElementById("lightboxName"),LBC=document.getElementById("lightboxClose"),LBP=document.getElementById("lightboxPrev"),LBNX=document.getElementById("lightboxNext"),LBT=[],LBIX=0;
 
-// ===== 视频控件样式注入 =====
+// ===== B站嵌入样式 & 视频控件隐藏 =====
 (function(){
   var s=document.createElement("style");
-  s.textContent="video::-webkit-media-controls-download-button,video::-webkit-media-controls-cast-button,video::-webkit-media-controls-overlay-cast-button,video::-internal-media-controls-cast-button,video::-internal-media-controls-download-button,video::-webkit-media-controls-picture-in-picture-button,video::-webkit-media-controls-toggle-closed-captions-button{display:none!important;width:0!important;height:0!important;opacity:0!important;pointer-events:none!important}";
+  s.textContent=".bili-embed{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1}video::-webkit-media-controls-download-button,video::-webkit-media-controls-cast-button,video::-webkit-media-controls-overlay-cast-button,video::-internal-media-controls-cast-button,video::-internal-media-controls-download-button,video::-webkit-media-controls-picture-in-picture-button,video::-webkit-media-controls-toggle-closed-captions-button{display:none!important;width:0!important;height:0!important;opacity:0!important;pointer-events:none!important}";
   document.head.appendChild(s);
 })();
 
@@ -76,28 +76,39 @@ function render(f){
     G.innerHTML="<div class=\"gallery-empty\">暂无作品</div>";
     return;
   }
+  var biliPrefix = "https://www.bilibili.com/video/";
   items.forEach(function(it,i){
     var c=document.createElement("div");c.className="gallery-card";
-    var v=it.type==="video";var n=it.file.replace(/\.[^.]+$/, "");var u=it.url||"media/"+encodeURI(it.file);
+    var v=it.type==="video";var n=it.file.replace(/\.[^.]+$/, "");var u="media/"+encodeURI(it.file);
     var b=v?"<svg width=14 height=14 viewBox=\"0 0 24 24\" fill=none stroke=currentColor stroke-width=2><polygon points=\"5 3 19 12 5 21 5 3\"/></svg>":"<svg width=14 height=14 viewBox=\"0 0 24 24\" fill=none stroke=currentColor stroke-width=2><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><path d=m21 15-5-5L5 21/></svg>";
-    var mt=v?'<video src="'+u+'" muted loop preload="metadata" playsinline disablePictureInPicture controlsList="nodownload" disableRemotePlayback webkit-playsinline></video>':'<img src="'+u+'" alt="" loading="lazy">';
-    var mn=it.file;
-    c.innerHTML='<div class="card-badge">'+b+'</div>'+mt+'<div class="card-overlay"><div class="card-name">'+n+'</div></div>'+
-      '<button class="card-more" title="更多选项"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button>'+
-      '<div class="card-menu">'+
-        '<button class="card-dl" data-url="'+u+'" data-name="'+mn+'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 下载</button>'+
-      '</div>';
-    c.addEventListener("click",function(e){
-      if(e.target.closest(".card-more,.card-menu"))return;
-      var q=this.querySelector("video");
-      if(q){
-        if(q.paused){q.play();q.controls=true;}else{q.pause();}
-      } else {
+    if(v){
+      var biliUrl = biliPrefix + it.bvid;
+      var embedUrl = "https://player.bilibili.com/player.html?bvid="+it.bvid+"&autoplay=0&muted=false&high_quality=1&danmaku=0";
+      var mt='<iframe src="'+embedUrl+'" frameborder="0" allowfullscreen style="width:100%;height:100%;pointer-events:none;" class="bili-embed"></iframe>';
+      var mn=it.file;
+      c.innerHTML='<div class="card-badge">'+b+'</div>'+mt+'<div class="card-overlay"><div class="card-name">'+n+'</div></div>'+
+        '<button class="card-more" title="更多选项"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button>'+
+        '<div class="card-menu">'+
+          '<button class="card-dl" data-url="'+biliUrl+'" data-name="'+mn+'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 在B站观看</button>'+
+        '</div>';
+      c.addEventListener("click",function(e){
+        if(e.target.closest(".card-more,.card-menu"))return;
+        window.open(biliUrl,"_blank");
+      });
+    } else {
+      var mt='<img src="'+u+'" alt="" loading="lazy">';
+      var mn=it.file;
+      c.innerHTML='<div class="card-badge">'+b+'</div>'+mt+'<div class="card-overlay"><div class="card-name">'+n+'</div></div>'+
+        '<button class="card-more" title="更多选项"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button>'+
+        '<div class="card-menu">'+
+          '<button class="card-dl" data-url="'+u+'" data-name="'+mn+'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> 下载</button>'+
+        '</div>';
+      c.addEventListener("click",function(e){
+        if(e.target.closest(".card-more,.card-menu"))return;
         var imgIdx = items.findIndex(function(m){return m.type==="image" && m.file===it.file});
         if(imgIdx>=0)openLightbox(items[imgIdx],items);
-      }
-    });
-    if(v){var vd=c.querySelector("video");c.addEventListener("mouseenter",function(){vd.play()});c.addEventListener("mouseleave",function(){vd.pause();vd.currentTime=0})}
+      });
+    }
     G.appendChild(c);
   });
 
